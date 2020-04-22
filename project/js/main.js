@@ -38,12 +38,15 @@ const items = () => {
 items(products);*/
 
 //Второй через метод forEach
-let productList = [];
-products.forEach(product => {
-    let {id, title, price} = product;
-    productList += renderProduct(title, price, id);
-});
-document.querySelector('.products').innerHTML = productList;
+let productList = '';
+const renderProducts = (products) => {
+    products.forEach(product => {
+        let {id, title, price} = product;
+        productList += renderProduct(title, price, id);
+    });
+    document.querySelector('.products').insertAdjacentHTML('afterbegin', productList);
+};
+renderProducts(products);
 
 //К сожалению, я не понял, почему в данных случаях "," не появляется,
 //а в методе map из лекции появляется.
