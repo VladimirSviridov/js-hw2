@@ -1,6 +1,17 @@
+@import "vars"
+
 *
   margin: 0
   padding: 0
+
+html
+    height: 100vh
+
+body
+  display: flex
+  flex-direction: column
+  height: 100%
+
 
 a
   text-decoration: none
@@ -11,14 +22,49 @@ input
 .center
   padding: 0 20px
 
+.header
+  background: $header__color
+
+.btn-cart
+  margin-top: 20px
+  margin-bottom: 20px
+
+button
+  padding: 4px
+
+.main
+  flex: 1 0 auto
+  background: $body__color
+
+  &__inner
+    padding-top: 50px
+
+
 .products
   display: flex
   justify-content: space-between
-  margin-top: 50px
 
 .product-item
+  height: 250px
+  display: flex
+  flex-direction: column
+  align-items: center
+  justify-content: space-between
+
+  img
+    border-radius: 10px 10px
+    &:hover
+      box-shadow: 0 0 5px aqua
+
+  &:hover h3,
+  &:hover p
+    text-shadow: 0 0 5px aqua
 
 
+.footer
+  display: flex
+  justify-content: flex-end
+  background: $footer__color
 
 @media (min-width: 575.98px)
   .center
