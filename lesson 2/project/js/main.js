@@ -3,6 +3,7 @@ class ProductList {
     this.container = container;
     this.goods = [];
     this.allProducts = [];
+    this.fullprice = 0;
     this._fetchProducts();
     this._render();
     this._cost();
@@ -31,14 +32,13 @@ class ProductList {
   //Метод считающий цену одной единицы каждого вида товара,
   //в т.ч. которые были бы получены с сервера.
   _cost(){
-    const block = document.querySelector(".price");
-    let price = 0;
     for (let product of this.allProducts) {
-      price += +product.price;
+      this.fullprice += +product.price;
     }
-    block.insertAdjacentHTML('beforeend', price);
+    console.log(this.fullprice);
   }
 }
+
 class ProductItem {
   constructor(product, img = 'https://placehold.it/200x150') {
     this.title = product.title;
@@ -58,6 +58,7 @@ class ProductItem {
             </div>`;
   }
 }
+
 new ProductList();
 
 //Класс корзины, содержащий в себе контейнер, привязанный к кнопке корзины
@@ -83,7 +84,6 @@ class Basket {
     //Метод назначает слушатель событий на кнопку удаления товара из корзины при нажатии на который
     //происходит удаление соответствующего элемента.
   };
-
 }
 
 //Класс элемента корзины, содержащий те жа свойства элемента, как и ProductItem,
@@ -101,3 +101,5 @@ class BasketItem {
     //Метод будет возвращать разметку для элемента корзины, в т.ч. кнопку удаления
   }
 }
+
+
