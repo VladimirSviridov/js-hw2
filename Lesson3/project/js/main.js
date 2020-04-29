@@ -48,14 +48,15 @@ class ProductList {
       this._render();
     });
   }
-/*
-  _getProducts() {
-    return fetch(`${API}/catalogData.json`)
-        .then(response => response.json())
-        .catch(error => {
-          console.log(error);
-        });
-  }*/
+
+  /*
+    _getProducts() {
+      return fetch(`${API}/catalogData.json`)
+          .then(response => response.json())
+          .catch(error => {
+            console.log(error);
+          });
+    }*/
 
   //Метод считающий сумму всех товаров, пришедших с сервера
   calcSum() {
@@ -74,11 +75,12 @@ class ProductList {
 }
 
 class ProductItem {
-  constructor(product, img = 'https://placehold.it/200x150') {
+  constructor(product, data = 0, img = 'https://placehold.it/200x150') {
     this.product_name = product.product_name;
     this.price = product.price;
     this.id_product = product.id_product;
     this.img = img;
+    this.counting = data;
   }
 
   render() {
@@ -91,77 +93,94 @@ class ProductItem {
                 </div>
             </div>`;
   }
+  renderBasket() {
+    return `<div class="basket__item" id="${this.id_product}" >
+                <img src="${this.img}" alt="Some img">
+                <div data-id="${this.price}" class="basket__item-desc">
+                    <h3>${this.product_name}</h3>
+                    <p>${this.price} \u20bd</p>
+                </div>
+                <p class="basket__item-counting">${this.counting}</p>
+                <i data-id="${this.id_product}" class="basket__close fas fa-times-circle"></i>
+            </div>`;
+  }
 }
+
 new ProductList();
 
 //Классы корзины
-
-
+let basketProducts = {};
+let removeFromBasket = (data, btn) =>{
+  let elemToDelete = document.getElementById(btn.dataset.id);
+  if (elemToDelete.children[2].textContent === data.result.toString()){
+    //Цену уменьшать соответственно приходится также
+    let container = document.getElementById("sumPrice");
+    let fullPrice = +container.innerText- +elemToDelete.children[2].textContent*+elemToDelete.children[1].dataset.id;
+    container.innerText = null;
+    container.textContent += +fullPrice;
+    elemToDelete.remove();
+  }
+};
 window.addEventListener('load', () => {
   window.addEventListener('click', () => {
     if (event.target.className.includes("buy-btn")) {
       this.btn = event.target;
-      new BasketList(btn);
+      new BasketList(btn, basketProducts);
+    }
+    if (event.target.className.includes("basket__close")){
+      this.exitBtn = event.target;
+      fetch(`${API}/deleteFromBasket.json`)
+        .then(response => response.json())
+        .then(data => removeFromBasket(data, this.exitBtn))
+        .catch(error => console.log(error));
     }
   });
+
   //Классы корзины
   class BasketList {
-    constructor(btn) {
+    constructor(btn, basketProducts) {
       this.btn = btn;
       this.listOfBuing = [];
-      this.basketProducts = [];
-      //this._renderBasket();
-      this._costBasket();
-      this._removeFromBasket();
+      this.basketProducts = basketProducts;
       this._fetchProducts();
       fetch(`${API}/addToBasket.json`)
         .then(response => response.json())
-        .then(data => this._renderBasket(data))
-          //const block = document.getElementById('ajax-block');
-          //block.insertAdjacentHTML('beforeend', `<p>${data.name} - <strong>${data.tel}</strong></p>`);
+        .then(data => this._renderBasket(data, basketProducts))
         .catch(error => console.log(error));
     }
     _fetchProducts() {
       getRequest(`${API}/catalogData.json`, (data) => {
         this.listOfBuing = [...data];
-        this._render();
       });
     }
-    //Остановился на подключении метода _render
-    _render() {
-      const block = document.querySelector(this.btn);
 
-      for (let product of this.listOfBuing) {
-        if (btn.parentNode.parentNode.dataset !== product){
-          break;
-        } else {
-          const productObject = new ProductItem(product);
-          this.basketProducts.push(productObject);
-          block.insertAdjacentHTML('beforeend', productObject.render());
-        }
-
-      }
-    }
-
-    _renderBasket(data){
-      //Должен быть слушатель событий на кнопке "купить", при нажатии на который
-      //должен формироваться массив listOfBuing и в корзину вставляться отрендеренный элемент
-      //с базовой информацией о товаре и кропкой удаления.
+    _renderBasket(data, basketProducts) {
+      const block = document.getElementById('cart');
       this.id = btn.parentNode.parentNode.dataset;
-      this.listOfBuing.push()
-      //this.listOfBuing.push(data);
-      //console.log(this.listOfBuing);
+      for (let product of this.listOfBuing) {
+        if (btn.parentNode.parentNode.dataset.id !== product.id_product.toString()) {
+        } else {
+          const productObject = new ProductItem(product, +data.result);
+          block.insertAdjacentHTML('beforeend', productObject.renderBasket());
+          //Не получается наполнить корзину, Не нашел способа поместить текущий объект в объект,
+          //хронящий все покупки (basketProducts). Я его специально поместил на верхнем уровне видимости,
+          //чтобы он не перетирался, но это не помногло.
+          basketProducts = Object.assign(basketProducts, productObject);
+          this.basketProducts ={...basketProducts, ...productObject};
+          //basketProducts = {...basketProducts, ...productObject};
+          this._costBasket(this.basketProducts);
+        }
+      }
     };
-    _costBasket(){
-      //Метод считает стоимость всех товаров в корзине и выводит её в соответствующее поле в корзине
-    };
-    _removeFromBasket(){
-      //Метод назначает слушатель событий на кнопку удаления товара из корзины при нажатии на который
-      //происходит удаление соответствующего элемента.
-    };
+        //Согласно вышеизложенному, полную стоимость считаю для единственного объекта, хранящегося в массиве,
+        //Стоимость остальных товаров считываю с экрана
+        _costBasket(){
+          let container = document.getElementById("sumPrice");
+          let fullPrice = this.basketProducts.price*this.basketProducts.counting + +container.textContent;
+          container.innerText = null;
+          container.textContent += +fullPrice;
+        };
   }
 });
-
-  //document.getElementsByClassName('buy-btn').onclick = () => alert("ghbdtn");
 
 

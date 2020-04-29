@@ -24,6 +24,41 @@ button{
     border-radius: 5px;
     transition: all ease-in-out .4s;
     cursor: pointer;
+    position: relative;
+}
+
+#cart{
+    display: flex;
+    position: absolute;
+    right: 30px;
+    top: 72px;
+    flex-direction: column;
+    align-items: center;
+    background: aqua;
+}
+.basket__item{
+    display: flex;
+    align-items: center;
+}
+.basket__item img{
+    height: 50px;
+    width: 75px;
+    margin: 0 5px;
+}
+.basket__item h3 {
+    font-size: 12px;
+}
+.basket__item-counting{
+    height: 20px;
+    width: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: white;
+    color: black;
+}
+.basket__close{
+    margin: 0 5px;
 }
 .btn-cart:hover{
     background-color: transparent;
