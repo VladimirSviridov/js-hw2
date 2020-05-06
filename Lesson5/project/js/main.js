@@ -15,6 +15,7 @@ const app = new Vue({
                     console.log(error);
                 })
         },
+
         addProduct(product){
             console.log(product.id_product);
         }
