@@ -1,0 +1,19 @@
+.divider{
+  display: flex;
+}
+.labels{
+  display: flex;
+  flex-direction: column;
+  line-height: 21px;
+  width: 100px;
+  margin-bottom: 10px;
+}
+
+textarea{
+  width: 267px;
+}
+
+.red {
+  background: red;
+/*  color: white;*/
+}
