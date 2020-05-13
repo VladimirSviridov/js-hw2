@@ -26,6 +26,7 @@ const app = new Vue({
               });
         },
         putJson(url, data) {
+          debugger
             return fetch(url, {
                 method: 'PUT',
                 headers: {
@@ -38,7 +39,17 @@ const app = new Vue({
               });
         },
         deleteJson(url, data) {
-
+          debugger
+          return fetch(url, {
+            method: 'DELETE',
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+          }).then(result => result.json())
+            .catch(error => {
+              this.$refs.error.setError(error);
+            });
         },
     },
     mounted() {
