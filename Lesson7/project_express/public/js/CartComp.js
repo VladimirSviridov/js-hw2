@@ -23,18 +23,22 @@ Vue.component('cart', {
                   });
             }
         },
-        remove(item) {
-            this.$parent.getJson(`${API}/deleteFromBasket.json`)
-                .then(data => {
-                    if(data.result === 1) {
-                        if(item.quantity>1){
-                            item.quantity--;
-                        } else {
-                            this.cartItems.splice(this.cartItems.indexOf(item), 1)
-                        }
-                    }
-                })
-        },
+        remove(product) {
+          //Удаление тоже работает
+          let find = this.cartItems.find(el => el.id_product === product.id_product);
+          if(find.quantity === 1){
+            this.$parent.deleteJson(`/api/cart/${find.id_product}`, product)
+              .then(data => {
+                if (data.result === 1) {
+                  this.cartItems.splice(this.cartItems.indexOf(product), 1)
+                }
+              });
+          } else {
+            //Уменьшение работает
+            this.$parent.putJson(`/api/cart/${find.id_product}`, {quantity: -1});
+            find.quantity--;
+          }
+        }
     },
     mounted(){
         this.$parent.getJson(`${API + this.cartUrl}`)
@@ -49,10 +53,10 @@ Vue.component('cart', {
             <button class="btn-cart" type="button" @click="showCart = !showCart">Корзина</button>
             <div class="cart-block" v-show="showCart">
                 <p v-if="!cartItems.length">Корзина пуста</p>
-                <cart-item class="cart-item" 
-                v-for="item of cartItems" 
+                <cart-item class="cart-item"
+                v-for="item of cartItems"
                 :key="item.id_product"
-                :cart-item="item" 
+                :cart-item="item"
                 :img="imgCart"
                 @remove="remove">
                 </cart-item>

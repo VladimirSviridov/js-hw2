@@ -10,7 +10,7 @@ const server = http.createServer((req, res) => {
         res.end();
     }
     if (req.url === '/api/users') {
-        fs.readFile('dbd.json', 'utf-8', (err, data) => {
+        fs.readFile('db.json', 'utf-8', (err, data) => {
             if (err) {
                 console.log(err);
             } else {

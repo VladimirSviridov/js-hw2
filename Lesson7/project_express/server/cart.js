@@ -8,10 +8,14 @@ const change = (cart, req) => {
   return JSON.stringify(cart, null, 4);
 };
 const del = (cart, req) => {
-
+  //Как отлаживать так и не понял
+  debugger
+  cart.contents.splice((req.body), 1);
+  return JSON.stringify(cart, null, 4);
 };
 
 module.exports = {
   add,
   change,
+  del
 };
